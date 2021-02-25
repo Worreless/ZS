@@ -104,6 +104,14 @@ export default {
             min-height: 52px;
             border-width: 0;
             border-radius: 6px;
+
+            // remove autofill background
+                &:-webkit-autofill,
+                &:-webkit-autofill:hover,
+                &:-webkit-autofill:focus,
+                &:-webkit-autofill:active  {
+                    -webkit-box-shadow: 0 0 0 30px $color_white inset !important;
+                }
         }
 
         &__label {
@@ -129,7 +137,7 @@ export default {
 
     .errorText {
         margin-top: 5px;
-        min-height: 13px;
+        min-height: 14px;
         font-size: 10px;
         line-height: 14px;
         color: $color_error_red;
