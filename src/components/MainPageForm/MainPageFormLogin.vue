@@ -5,51 +5,103 @@ form.loginForm(
     h2.formTitle.title Вход
 
     VInput.input(
-        v-model="login"
-        :hasError="hasError"
-        label='Логин'
+        v-model="email"
+        :hasError="has_error"
+        label='E-mail или телефон'
         type="text"
         :required="true"
         @focus="resetErrors"
     )
     MainPageFormLoginInputPassword.input(
         v-model="password"
-        :hasError="hasError"
+        :hasError="has_error"
         :errorText="errorText"
         @focus="resetErrors"
     )
 
-    VButton(type="submit") Войти
+    VButton(type="submit" :disabled="is_button_disabled") Войти
 </template>
 
-const messages = {
-    incorrect_credentials: 'Введены неверные данные.',
-    server_error: 'Ошибка на сервере. Повторите запрос позже.'
-}
-
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import VInput from '@/components/VInput'
 import VButton from '@/components/VButton'
 import MainPageFormLoginInputPassword from './MainPageFormLoginInputPassword'
+
+const ERROR_MESSAGES_LIST = {
+    incorrect_credentials: 'Введены неверные данные.',
+    server_error: 'Ошибка на сервере. Повторите запрос позже.'
+}
+const REQUEST_STATUS_LIST = {
+    error: 'error',
+    loading: 'loading',
+    inactive: 'inactive'
+}
 
 export default {
     components: { VInput, VButton, MainPageFormLoginInputPassword },
 
     data () {
         return {
-            login: '',
+            email: '',
             password: '',
-            hasError: false,
-            errorText: ''
+            errorText: '',
+            requestStatus: REQUEST_STATUS_LIST.inactive
+        }
+    },
+
+    computed: {
+        ...mapGetters('auth', [
+            'is_logged'
+        ]),
+        has_error () {
+            return this.requestStatus === REQUEST_STATUS_LIST.error
+        },
+        is_button_disabled () {
+            return this.requestStatus === REQUEST_STATUS_LIST.loading
+        }
+    },
+
+    created () {
+        if (this.is_logged) {
+            this.$router.push('/orders')
         }
     },
 
     methods: {
-        onSubmit () {
-            console.log('Form Sended')
+        ...mapActions('auth', [
+            'login'
+        ]),
+        async onSubmit () {
+            try {
+                this.requestStatus = REQUEST_STATUS_LIST.loading
+
+                await this.login({
+                    email: this.email,
+                    password: this.password
+                })
+
+                this.$router.push('/orders')
+
+                this.requestStatus = REQUEST_STATUS_LIST.inactive
+            } catch (error) {
+                this.requestStatus = REQUEST_STATUS_LIST.error
+
+                const errorCode = error.response?.status
+
+                switch (errorCode) {
+                case 401:
+                    this.errorText = ERROR_MESSAGES_LIST.incorrect_credentials
+                    break
+
+                default:
+                    this.errorText = ERROR_MESSAGES_LIST.server_error
+                    break
+                }
+            }
         },
         resetErrors () {
-            this.hasError = false
+            this.requestStatus = REQUEST_STATUS_LIST.inactive
             this.errorText = ''
         }
     }

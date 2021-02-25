@@ -11,6 +11,7 @@ VInput.passwordInput(
     @focus="focus"
 )
     template( v-slot:icon="")
+        // TODO: import as svg, autoclean fill attribute and set hover/active styles
         img(:src="uploadIcon(icon_type)" @click="toggleInputType").passwordInput__icon
 </template>
 
