@@ -1,0 +1,49 @@
+@import './fonts';
+@import './variables';
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    color: $color_typo_black;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1156px;
+    margin: 0 auto;
+}
+
+.pageTitle {
+    font-size: 36px;
+    line-height: 43px;
+    font-weight: 500;
+}
+
+.formTitle {
+    font-size: 26px;
+    line-height: 31px;
+    font-weight: 500;
+}
+
+.link {
+    text-decoration: none;
+    color: $color_accent-green;
+
+    &:hover, 
+    &:active {
+        color: $color_typo_black;
+    }
+}
